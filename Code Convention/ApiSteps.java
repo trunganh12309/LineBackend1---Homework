@@ -29,6 +29,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles({"test", "test-local"})
 public class ApiSteps {
+	
+  private final String ACCESS_TOKEN = "access_token";
+  private final String EXTRA = "extra";
+  private final String DATA = "data";
+  private final String FAKE_TOKEN = "sometoken";
+  private final String SRC_PATH = "src/test/resources/";
 
   @Value("${mockServer}")
   boolean usingMockServer;
@@ -81,11 +87,11 @@ public class ApiSteps {
     response = restTemplate.exchange(builder.build().toUri(), requestMethod, entity, JsonNode.class);
   }
 
-  void verifyResponse(String expectedResource, boolean b) throws Exception {
+  void verifyResponse(String expectedResource, boolean strict) throws Exception {
     if (!Strings.isNullOrEmpty(expectedResource)) {
       String jsonExpected = FileUtils.readForString(expectedResource);
       if (usingMockServer) {
-        resultActions.andExpect(content().json(jsonExpected, b));
+        resultActions.andExpect(content().json(jsonExpected, strict));
       } else {
         JSONAssert.assertEquals(jsonExpected, response.getBody().toString(), true);
       }
@@ -101,7 +107,7 @@ public class ApiSteps {
   }
 
   static void saveToFile(String path) throws Exception {
-    String filePath = "src/test/resources/" + path;
+    String filePath = SRC_PATH + path;
     ObjectWriter writer = FileUtils.mapper.writer(new DefaultPrettyPrinter());
     try {
       ObjectNode objectNode = FileUtils.mapper.valueToTree(response.getBody());
@@ -113,17 +119,17 @@ public class ApiSteps {
   }
 
   private static void hideToken(ObjectNode objectNode) {
-    if (objectNode.hasNonNull("access_token")) {
-      objectNode.remove("access_token");
-      objectNode.put("access_token", "sometoken");
-    } else if (objectNode.hasNonNull("extra") && objectNode.get("extra").hasNonNull("access_token")) {
-      ObjectNode extra = (ObjectNode) objectNode.get("extra");
-      extra.remove("access_token");
-      extra.put("access_token", "sometoken");
-    } else if (objectNode.hasNonNull("data") && objectNode.get("data").hasNonNull("access_token")) {
-      ObjectNode data = (ObjectNode) objectNode.get("data");
-      data.remove("access_token");
-      data.put("access_token", "sometoken");
+    if (objectNode.hasNonNull(ACCESS_TOKEN)) {
+      objectNode.remove(ACCESS_TOKEN);
+      objectNode.put(ACCESS_TOKEN, FAKE_TOKEN);
+    } else if (objectNode.hasNonNull(EXTRA) && objectNode.get(EXTRA).hasNonNull(ACCESS_TOKEN)) {
+      ObjectNode extra = (ObjectNode) objectNode.get(EXTRA);
+      extra.remove(ACCESS_TOKEN);
+      extra.put(ACCESS_TOKEN, FAKE_TOKEN);
+    } else if (objectNode.hasNonNull(DATA) && objectNode.get(DATA).hasNonNull(ACCESS_TOKEN)) {
+      ObjectNode data = (ObjectNode) objectNode.get(DATA);
+      data.remove(ACCESS_TOKEN);
+      data.put(ACCESS_TOKEN, FAKE_TOKEN);
     }
   }
 }
