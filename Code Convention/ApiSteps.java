@@ -85,8 +85,7 @@ public class ApiSteps {
     if (!Strings.isNullOrEmpty(expectedResource)) {
       String jsonExpected = FileUtils.readForString(expectedResource);
       if (usingMockServer) {
-        resultActions
-          .andExpect(content().json(jsonExpected, b));
+        resultActions.andExpect(content().json(jsonExpected, b));
       } else {
         JSONAssert.assertEquals(jsonExpected, response.getBody().toString(), true);
       }
@@ -94,11 +93,11 @@ public class ApiSteps {
   }
 
   public static void excuteRequestAndSaveToFile(String token, JsonNode body, String filePath) throws Exception {
-    if (Strings.isNullOrEmpty(ApiSteps.httpHeaders.getFirst(HttpHeaders.AUTHORIZATION))) {
-      ApiSteps.httpHeaders.setBearerAuth(token);
+    if (Strings.isNullOrEmpty(httpHeaders.getFirst(HttpHeaders.AUTHORIZATION))) {
+      httpHeaders.setBearerAuth(token);
     }
-    ApiSteps.excuteRequest(body);
-    ApiSteps.saveToFile(filePath);
+    excuteRequest(body);
+    saveToFile(filePath);
   }
 
   static void saveToFile(String path) throws Exception {
