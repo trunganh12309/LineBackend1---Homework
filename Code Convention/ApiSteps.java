@@ -30,11 +30,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({"test", "test-local"})
 public class ApiSteps {
 	
-  private final String ACCESS_TOKEN = "access_token";
-  private final String EXTRA = "extra";
-  private final String DATA = "data";
-  private final String FAKE_TOKEN = "sometoken";
-  private final String SRC_PATH = "src/test/resources/";
+  private static final String ACCESS_TOKEN = "access_token";
+  private static final String EXTRA = "extra";
+  private static final String DATA = "data";
+  private static final String FAKE_TOKEN = "sometoken";
+  private static final String SRC_PATH = "src/test/resources/";
 
   @Value("${mockServer}")
   boolean usingMockServer;
